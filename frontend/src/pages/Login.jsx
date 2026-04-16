@@ -33,7 +33,8 @@ const Login = () => {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1 style={{ color: '#f8fafc' }}>Acceso Seguro 🔒</h1>
+      <h1 style={{ color: '#f8fafc', fontSize: '1.8rem', marginBottom: '0.5rem' }}>Bienvenido de nuevo</h1>
+      <p style={{ color: '#94a3b8', marginBottom: '1.5rem', marginTop: 0, fontSize: '0.95rem' }}>Ingresa tus credenciales para continuar.</p>
 
       <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <input 
@@ -45,36 +46,52 @@ const Login = () => {
             style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
             disabled={cargando}
         />
-        <input 
-            type="password" 
-            placeholder="Introduce tu clave secreta" 
-            required 
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-            style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
-            disabled={cargando}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px'}}>
+            <input 
+                type="password" 
+                placeholder="Introduce tu clave secreta" 
+                required 
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
+                style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
+                disabled={cargando}
+            />
+            {/* BOTÓN OLVIDÉ CONTRASEÑA */}
+            <div style={{ textAlign: 'right', marginTop: '5px' }}>
+                <span 
+                    onClick={() => toast("Solicitud enviada (Módulo de Email disponible en V 2.0)", { icon: '📨', style: {background: '#334155', color: '#fff'} })}
+                    style={{ color: '#94a3b8', fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                    ¿Olvidaste tu contraseña?
+                </span>
+            </div>
+        </div>
         
         <button 
             type="submit" 
             disabled={cargando}
             style={{ 
-                padding: '0.8rem', 
-                backgroundColor: cargando ? '#475569' : '#3b82f6', // Transiciones elegantes 
+                marginTop: '0.6rem',
+                padding: '0.85rem', 
+                backgroundColor: cargando ? '#475569' : '#3b82f6', 
                 color: 'white', 
                 cursor: cargando ? 'not-allowed' : 'pointer', 
-                fontWeight: 'bold',
+                fontWeight: '600',
                 transition: 'background 0.2s',
                 border: 'none',
                 borderRadius: '8px'
             }}
         >
-           {cargando ? 'Verificando en MongoDB...' : 'Conectar con Base de Datos'}
+           {cargando ? 'Autenticando...' : 'Acceder al Panel'}
         </button>
       </form>
-      <p style={{ marginTop: '1rem', textAlign: 'center', color: '#94a3b8' }}>
-        ¿Negocio nuevo por aquí? <Link to="/register" style={{ color: '#38bdf8' }}>Lleva tus cuentas gratis</Link>
-      </p>
+      
+      
+      {/* MEJORA UX CLARA: CALL TO ACTION PARA REGISTRO */}
+      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>¿Aún no tienes una cuenta? </span>
+          <Link to="/register" style={{ color: '#3b82f6', fontWeight: '600', textDecoration: 'none', fontSize: '0.9rem' }}>Créala gratis aquí</Link>
+      </div>
     </div>
   );
 };

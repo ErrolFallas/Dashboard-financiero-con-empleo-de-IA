@@ -8,11 +8,19 @@ const Register = () => {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [confirmarContrasena, setConfirmarContrasena] = useState(''); // Nuevo input anti-errores
   const [cargando, setCargando] = useState(false); // Seguro Antibots
 
   const handleRegister = async (e) => { 
       e.preventDefault();
       setCargando(true);
+      
+      // Bloqueo de Muros Cruzados UX
+      if (contrasena !== confirmarContrasena) {
+          toast.error("❌ Las contraseñas no coinciden. Inténtalo de nuevo.");
+          setCargando(false);
+          return;
+      }
       
       try {
           const respuesta = await api.post('/autenticacion/registro', {
@@ -31,7 +39,8 @@ const Register = () => {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-        <h1 style={{ color: '#f8fafc' }}>Nuevo Emprendedor 🚀</h1>
+        <h1 style={{ color: '#f8fafc', fontSize: '1.8rem', marginBottom: '0.5rem' }}>Crea tu Cuenta</h1>
+        <p style={{ color: '#94a3b8', marginBottom: '1.5rem', marginTop: 0, fontSize: '0.95rem' }}>Comienza a gestionar tus finanzas hoy mismo.</p>
         
         <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input 
@@ -63,27 +72,40 @@ const Register = () => {
                 disabled={cargando}
             />
             
+            {/* Campo Confirmación de Clave */}
+            <input 
+                type="password" 
+                placeholder="Repite tu contraseña para confirmarla" 
+                required 
+                value={confirmarContrasena}
+                onChange={(e) => setConfirmarContrasena(e.target.value)}
+                style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
+                disabled={cargando}
+            />
+            
             <button 
                 type="submit" 
                 disabled={cargando}
                 style={{ 
-                    padding: '0.8rem', 
-                    backgroundColor: cargando ? '#475569' : '#10b981', // Verde éxito para registro
+                    marginTop: '0.6rem',
+                    padding: '0.85rem', 
+                    backgroundColor: cargando ? '#475569' : '#10b981', 
                     color: 'white', 
                     cursor: cargando ? 'not-allowed' : 'pointer',
-                    fontWeight: 'bold',
+                    fontWeight: '600',
                     transition: 'background 0.2s',
                     border: 'none',
                     borderRadius: '8px'
                 }}
             >
-                {cargando ? 'Registrando Seguridad...' : 'Construir Negocio'}
+                {cargando ? 'Procesando...' : 'Registrarme'}
             </button>
         </form>
         
-        <p style={{ marginTop: '1rem', textAlign: 'center', color: '#94a3b8' }}>
-          ¿Ya dominas tus finanzas? <Link to="/login" style={{ color: '#38bdf8' }}>Inicia Sesión aquí</Link>
-        </p>
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>¿Ya tienes una cuenta? </span>
+          <Link to="/login" style={{ color: '#3b82f6', fontWeight: '600', textDecoration: 'none', fontSize: '0.9rem' }}>Inicia Sesión</Link>
+        </div>
     </div>
   );
 };
