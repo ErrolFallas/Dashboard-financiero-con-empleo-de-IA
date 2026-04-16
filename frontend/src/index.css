@@ -90,3 +90,55 @@ body {
   background: #f43f5e;
   color: white;
 }
+
+/* ======================================================== */
+/*                  MEJORAS UX: SKELETONS                   */
+/* ======================================================== */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; } /* El bajón de opacidad crea la ilusión visual de estar leyendo data */
+}
+
+.skeleton-box {
+  background: rgba(148, 163, 184, 0.15); /* Gris muy sutil con destellos metálicos */
+  border-radius: 8px;
+  animation: pulseGlow 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeleton-text {
+  height: 20px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.skeleton-title {
+  height: 28px;
+  width: 40%;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-circle {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  margin: auto;
+}
+
+/* ======================================================== */
+/*             MEJORAS UX: TRANSICIÓN SUAVE (FADE-IN)       */
+/* ======================================================== */
+@keyframes pageFadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(15px); /* Salta sutilmente hacia arriba */
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.animate-fade-in {
+  /* Al cargarse un componente con esta clase, brillará y emergerá mágicamente */
+  animation: pageFadeIn 0.6s ease-out forwards;
+}

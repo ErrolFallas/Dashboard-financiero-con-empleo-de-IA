@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { crear, obtenerTodas, actualizar, eliminar } from '../controllers/transaccion.controlador.js';
 // Importación clave: Nuestro escudo o aduana fronteriza (Middleware verficador).
 import { verificarToken } from '../middlewares/verificarToken.js';
-import { validadorTransaccion } from '../middlewares/validarTransaccion.js';
+import { validadorTransaccion, validadorIdTransaccion } from '../middlewares/validarTransaccion.js';
 
 const enrutador = Router();
 
@@ -20,10 +20,10 @@ enrutador.post('/', validadorTransaccion, crear);
 enrutador.get('/', obtenerTodas);
 
 // [Actualizar por ID Mongo]: Endpoint -> PUT /api/transacciones/:id
-// También forzamos la misma validación robusta para impedir corromper los datos previamente buenos.
-enrutador.put('/:id', validadorTransaccion, actualizar);
+// Aquí intervienen TRES escudos: Tienes Token? -> Es un HashID Valido? -> Trae números limpios la edicion? -> ¡ACTUALIZA BDD!
+enrutador.put('/:id', validadorIdTransaccion, validadorTransaccion, actualizar);
 
 // [Borrado por ID Mongo]: Endpoint -> DELETE /api/transacciones/:id
-enrutador.delete('/:id', eliminar);
+enrutador.delete('/:id', validadorIdTransaccion, eliminar);
 
 export default enrutador;

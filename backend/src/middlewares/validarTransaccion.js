@@ -1,4 +1,4 @@
-import { check, validationResult } from 'express-validator';
+import { check, param, validationResult } from 'express-validator';
 
 export const validadorTransaccion = [
     // ===============================================
@@ -42,6 +42,27 @@ export const validadorTransaccion = [
         }
         
         // Si todo está inmaculado y pasaste la aduana, permitimos continuar el flujo al Controller.
+        next();
+    }
+];
+
+// ===============================================
+// 3. SELLO ANTIBOMBAS DE PARÁMETROS URI (MONGO_ID)
+// ===============================================
+// Intercepta peticiones del tipo /transacciones/123 y las bloquea porque Mongo usa 24 chars Hex.
+export const validadorIdTransaccion = [
+    param('id')
+        .isMongoId().withMessage('Rechazo automático: El ID de transacción proveído no pertenece a un objeto hexadecimal válido.'),
+        
+    (req, res, next) => {
+        const fallos = validationResult(req);
+        if(!fallos.isEmpty()){
+            return res.status(400).json({
+                success: false,
+                message: "Estructura de petición asíncrona corrupta",
+                erroresAdicionales: fallos.array().map(e => e.msg)
+            });
+        }
         next();
     }
 ];

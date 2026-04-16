@@ -1,45 +1,35 @@
 import { registrarUsuario, iniciarSesionUsuario } from '../services/autenticacion.servicio.js';
 
 /**
- * Controlador de Registro.
- * Recibe datos, llama al analizador del negocio y retorna los estados HTML Correctos.
+ * Controlador de Registro. Purificación completada al borrar validadores manuales.
  */
-export const registrar = async (req, res) => {
+export const registrar = async (req, res, next) => {
     try {
         const { nombre, correo, contrasena } = req.body;
         
-        // Escudo Controlador: Verificamos si la solicitud del cliente tiene lo mínimo requerido
-        if(!nombre || !correo || !contrasena) {
-            return res.status(400).json({ error: 'Todos los campos (nombre, correo, contrasena) son obligatorios.' });
-        }
-
+        // La validación cruda se fue. Si llega hasta aquí, express-validator ya certificó que es Data Perfecta.
         const usuario = await registrarUsuario(nombre, correo, contrasena);
-        
-        // 201 Significa un recurso "Creado Exitosamente"
         res.status(201).json({ mensaje: 'Usuario registrado exitosamente', usuario });
     } catch (error) {
-        // En caso del Error lanzado por Duplicidad o servidor interno
-        res.status(400).json({ error: error.message });
+        // Enlaza el probable error E11000 al Handler
+        error.statusCode = 400;
+        next(error);
     }
 };
 
 /**
- * Controlador de Iniciar Sesión
+ * Controlador de Iniciar Sesión. 
  */
-export const iniciarSesion = async (req, res) => {
+export const iniciarSesion = async (req, res, next) => {
     try {
         const { correo, contrasena } = req.body;
-
-        if(!correo || !contrasena) {
-            return res.status(400).json({ error: 'Correo y contraseña son obligatorios.' });
-        }
-
-        const resultado = await iniciarSesionUsuario(correo, contrasena);
         
-        // 200 Significa "Solicitud exitosa - Operación completada"
+        // De nuevo, data pre-limpia. El servicio realiza el trabajo.
+        const resultado = await iniciarSesionUsuario(correo, contrasena);
         res.status(200).json(resultado);
     } catch (error) {
-        // En caso de las credenciales no válidas devolvemos mensaje HTML de acceso de "No Autorizado" (401)
-        res.status(401).json({ error: error.message });
+        // Hint del estatus 401 (Denegado) para que el front no intente cachearlo
+        error.statusCode = 401; 
+        next(error);
     }
 };

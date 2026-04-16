@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api.js';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -18,11 +18,14 @@ const Dashboard = () => {
     // NUEVO ESTADO: Controlador universal para apagar o encender nuestra ventana flotante (Modal)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        cargarDatosGlobales();
-    }, []);
+    // Envolvemos el cierre absoluto con constricción para el efecto
+    const handleCerrarSesion = useCallback(() => {
+      localStorage.removeItem('token');
+      navigate('/login');
+    }, [navigate]);
 
-    const cargarDatosGlobales = async () => {
+    // PREVENCIÓN DE FUGAS DE MEMORIA Y RE-RENDERS (Performance Pro)
+    const cargarDatosGlobales = useCallback(async () => {
         try {
             const [resTransacciones, resAnalisis] = await Promise.all([
                 api.get('/transacciones'),
@@ -33,18 +36,18 @@ const Dashboard = () => {
             setAnalisis(resAnalisis.data);
         } catch (error) {
             console.error(error);
+            // El API Interceptor ya hace lo suyo, solo validamos la patada visual al usuario si caducó
             if(error.response?.status === 401 || error.response?.status === 403) {
                  handleCerrarSesion();
             }
         } finally {
             setCargando(false);
         }
-    };
+    }, [handleCerrarSesion]);
 
-    const handleCerrarSesion = () => {
-      localStorage.removeItem('token');
-      navigate('/login');
-    };
+    useEffect(() => {
+        cargarDatosGlobales();
+    }, [cargarDatosGlobales]);
 
     // ============================================
     // FLAP COMUNICADOR: HIJO (Form) -> PADRE (Dash)
@@ -88,15 +91,59 @@ const Dashboard = () => {
     const COLORES_GRAFICO = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
 
     if (cargando) {
-        return <div style={{display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center'}}>
-            <h2 className="text-neutral">Iniciando conexiones biométricas seguras...</h2>
-        </div>;
+        // [MEJORA UX] - Loading Skeletons en lugar de Texto Crudo
+        return (
+            <div className="animate-fade-in" style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+                {/* Cabecera Fake */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
+                    <div className="skeleton-box skeleton-title" style={{ width: '300px' }}></div>
+                    <div className="skeleton-box" style={{ width: '150px', height: '40px' }}></div>
+                </div>
+
+                {/* KPIs Skeletons */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="glass-card">
+                            <div className="skeleton-box skeleton-text" style={{ width: '60%' }}></div>
+                            <div className="skeleton-box" style={{ width: '80%', height: '45px', marginTop: '10px' }}></div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Skeletons Principales (IA, Grafo, Tabla) */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1fr', gap: '1.5rem', alignItems: 'start' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        <div className="glass-card" style={{ height: '220px' }}>
+                             <div className="skeleton-box skeleton-title" style={{ width: '60%' }}></div>
+                             <div className="skeleton-box skeleton-text"></div>
+                             <div className="skeleton-box skeleton-text" style={{ width: '80%' }}></div>
+                        </div>
+                        <div className="glass-card" style={{ height: '380px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                             <div className="skeleton-box skeleton-circle"></div>
+                        </div>
+                    </div>
+                    
+                    <div className="glass-card" style={{ height: '640px' }}>
+                        <div className="skeleton-box skeleton-title" style={{ width: '50%' }}></div>
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '25px', marginTop: '15px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '50%' }}>
+                                    <div className="skeleton-box skeleton-text" style={{ margin: 0 }}></div>
+                                    <div className="skeleton-box skeleton-text" style={{ width: '60%', height: '14px', margin: 0 }}></div>
+                                </div>
+                                <div className="skeleton-box" style={{ width: '90px', height: '30px' }}></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     const { resumen, insights } = analisis || {};
 
     return (
-      <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="animate-fade-in" style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
         
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
           <div>

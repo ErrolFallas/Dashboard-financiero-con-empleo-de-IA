@@ -15,12 +15,19 @@ export const verificarToken = (req, res, next) => {
     const token = cabeceraAutorizacion.split(' ')[1]; // Cortamos la palabra Bearer y nos quedamos con el cifrado puro
 
     try {
-        const llaveSecreta = process.env.JWT_SECRET || 'llave_super_secreta_desarrollo';
+        const llaveSecreta = process.env.JWT_SECRET;
         
-        // jwt.verify lanzará un error forzoso si el token ha sido manipulado a la fuerza o si ya expiró su día vital.
-        const payloadVerificado = jwt.verify(token, llaveSecreta);
+        // Bloque de Choque Frontal en caso de subir Backend sin Variables de Entorno Seguras
+        if (!llaveSecreta && process.env.NODE_ENV !== 'development') {
+            throw new Error("INCIDENTE CIBERNÉTICO: Se intentó procesar un Token en un Servidor en Nube sin Llave Secreta.");
+        }
         
-        // Si el cliente aprueba la evaluación técnica de jwt, nosotros inyectamos sus datos originales descifrados en este Request 
+        const secretoFinal = llaveSecreta || 'llave_super_secreta_desarrollo';
+        
+        // jwt.verify lanzará un error forzoso si el token ha sido manipulado a la fuerza o si expiró
+        const payloadVerificado = jwt.verify(token, secretoFinal);
+        
+        // Si el cliente aprueba la evaluación técnica, inyectamos sus datos descifrados
         req.usuarioVerificado = payloadVerificado;
         
         // Y por fin dejamos continuar al ciclo interno de express  
