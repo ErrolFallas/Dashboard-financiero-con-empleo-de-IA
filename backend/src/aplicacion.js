@@ -7,6 +7,9 @@ import rutasAutenticacion from './routes/autenticacion.rutas.js';
 import rutasTransaccion from './routes/transaccion.rutas.js';
 import rutasIA from './routes/ia.rutas.js'; 
 
+// Importación Clave: Gestor Mudo de Errores
+import { errorHandler } from './middlewares/errorHandler.js';
+
 const aplicacion = express();
 
 // --- ZONA DE INTERMEDIARIOS GLOBALES ---
@@ -19,5 +22,11 @@ aplicacion.use('/api', rutasDeEstado);
 aplicacion.use('/api/autenticacion', rutasAutenticacion);
 aplicacion.use('/api/transacciones', rutasTransaccion);
 aplicacion.use('/api/analisis', rutasIA);
+
+// =========================================
+// MURO FINAL: CAPTURADOR GLOBAL DE ERRORES
+// =========================================
+// Este middleware DEBE conectarse obligatoriamente hasta el FINAL, debajo de *todas* las demás rutas.
+aplicacion.use(errorHandler);
 
 export default aplicacion;

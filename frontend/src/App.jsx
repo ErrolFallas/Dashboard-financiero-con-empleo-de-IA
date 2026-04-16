@@ -9,9 +9,12 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 
+// Importación estructural: El escudo de React
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       {/* 
          El TAG TOASTER escucha de forma global. Solo se declara 1 vez en toda la App.
          Todos los estilos que definamos aquí los heredarán las burbujitas. 
@@ -56,7 +59,7 @@ function App() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
-    </>
+    </ErrorBoundary>
   );
 }
 
