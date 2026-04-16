@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api.js';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ArrowUpRight, ArrowDownRight, Wallet, BrainCircuit } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, BrainCircuit, PlusCircle } from 'lucide-react';
+import toast from 'react-hot-toast'; // Importamos el gatillo de notificaciones
+
+// IMPORTAMOS NUESTROS COMPONENTES ESTRUCTURALES
+import Modal from '../components/Modal/Modal.jsx';
+import TransactionForm from '../components/TransactionForm.jsx';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -10,22 +15,24 @@ const Dashboard = () => {
     const [analisis, setAnalisis] = useState(null);
     const [cargando, setCargando] = useState(true);
 
+    // NUEVO ESTADO: Controlador universal para apagar o encender nuestra ventana flotante (Modal)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     useEffect(() => {
         cargarDatosGlobales();
     }, []);
 
     const cargarDatosGlobales = async () => {
         try {
-            // Paralelizamos las peticiones: Buscamos Historial visual, y llamamos explícitamente al End-point POST de la IA local.
             const [resTransacciones, resAnalisis] = await Promise.all([
                 api.get('/transacciones'),
-                api.post('/analisis', {}) // Pasamos objeto vacío; la IA sabrá autocompletar leyendo Node.JS
+                api.post('/analisis', {})
             ]);
             
             setTransacciones(resTransacciones.data);
             setAnalisis(resAnalisis.data);
         } catch (error) {
-            console.error("Fallo de red al armar Dashboard Complejo:", error);
+            console.error(error);
             if(error.response?.status === 401 || error.response?.status === 403) {
                  handleCerrarSesion();
             }
@@ -39,7 +46,38 @@ const Dashboard = () => {
       navigate('/login');
     };
 
-    // Preparamos la limpieza y re-estructuración de datos para inyectarlos en Recharts
+    // ============================================
+    // FLAP COMUNICADOR: HIJO (Form) -> PADRE (Dash)
+    // ============================================
+    const manejarNuevaTransaccion = async (paqueteFinanciero) => {
+        try {
+            // [ZONA DE VERDAD - CONTACTANDO AL BACKEND MONGODB]
+            
+            // 1. Usamos nuestra instancia Axios "api.js". Hacemos un hit POST a tu ruta.
+            // Recuerda: No necesitas escribir 'Headers: Bearer' aquí porque 
+            // nuestro Interceptor ya lo empacó silenciosamente bajo el telón.
+            await api.post('/transacciones', paqueteFinanciero);
+            
+            // 2. Si Mongo devolvió código 201 (Created), Ocultamos el componente cristal de fondo inmediatamente
+            setIsModalOpen(false);
+            
+            // 3. (ESTRATEGIA REACTIVA) 
+            // Invocamos la orden de Refresco Maestro en el Dashboard. 
+            // Esto llamará de regreso a /transacciones y /analisis permitiendo a React
+            // actualizar mágicamente la interfaz gráfica (Historial y la IA Analítica),
+            // ¡Todo bajo el tapete sin usar molestos window.location.reload()!
+            cargarDatosGlobales();
+            
+            // 4. EL PODER DE LA UX (TOAST)
+            toast.success("¡Operación registrada con éxito en tu bóveda!");
+
+        } catch (error) {
+            console.error("Fallo durante guardado contable:", error);
+            // Destruimos el "alert()" intrusivo nativo del navegador, por la burbuja suave flotante.
+            toast.error("Datos denegados. Tu conexión falló o tu sesión caducó.");
+        }
+    };
+
     const dataGrafico = analisis?.gastosPorCategoria 
         ? Object.keys(analisis.gastosPorCategoria).map(key => ({
             name: key,
@@ -55,37 +93,43 @@ const Dashboard = () => {
         </div>;
     }
 
-    // Desestructuramos para acortar código abajo
     const { resumen, insights } = analisis || {};
 
     return (
       <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* ENCABEZADO GLORIOSO */}
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
           <div>
             <h1 style={{ margin: 0, fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Wallet className="text-neutral" size={32}/> Control Maestro Financiero
+                <Wallet className="text-neutral" size={32}/> Control Céntrico
             </h1>
-            <p className="metric-title" style={{ marginTop: '8px' }}>Resumen Ejecutivo en Tiempo Real impulsado por Lógica Pura</p>
+            <p className="metric-title" style={{ marginTop: '8px' }}>Visualización General Integral de Movimientos</p>
           </div>
-          <button onClick={handleCerrarSesion} className="btn-danger">
-            Desconectar y Salir
-          </button>
+          
+          <div style={{ display: 'flex', gap: '10px' }}>
+              {/* BOTÓN DISPARADOR: Al clickearlo sube la variable 'isModalOpen' a TRUE forzando el montaje del componente Modal */}
+              <button 
+                  onClick={() => setIsModalOpen(true)}
+                  style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0.8rem 1rem', borderRadius: '8px', display: 'flex', gap: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                  <PlusCircle size={20} /> Nueva Transacción
+              </button>
+              
+              <button onClick={handleCerrarSesion} className="btn-danger">
+                Salir del Sistema
+              </button>
+          </div>
         </header>
-        
-        {/* TOP ROW: KPIs ESTRATÉGICOS (MÉTRICAS CLAVE) */}
+
+        {/* ... BLOQUE DE KPIs ... */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-            
             <div className="glass-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p className="metric-title">Ingresos Brutos Absolutos</p>
                     <ArrowUpRight className="text-success" />
                 </div>
-                {/* Con .toFixed(2) garantizamos un formato elegante de moneda */}
                 <p className="metric-value text-success">${resumen?.ingresosTotales?.toFixed(2) || '0.00'}</p>
             </div>
-
             <div className="glass-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p className="metric-title">Gastos Contables</p>
@@ -93,7 +137,6 @@ const Dashboard = () => {
                 </div>
                 <p className="metric-value text-danger">${resumen?.gastosTotales?.toFixed(2) || '0.00'}</p>
             </div>
-
             <div className="glass-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p className="metric-title">Balance Neto Resultante</p>
@@ -103,76 +146,49 @@ const Dashboard = () => {
                     ${resumen?.balance?.toFixed(2) || '0.00'}
                 </p>
             </div>
-            
         </div>
 
-        {/* MIDDLE ROW: CONTENIDO PRINCIPAL Y CEREBRO ARTIFICIAL */}
+        {/* ... BLOQUE DE GRÁFICA Y LISTADO ... */}
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1fr', gap: '1.5rem', alignItems: 'start' }}>
             
-            {/* LADO IZQUIERDO: Analítica e Inteligencia Artificial */}
+            {/* LADO IZQ: IA Y DOUGHNUT */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                
-                {/* MOTOR IA CAJA DE TEXTOS */}
                 <div className="glass-card" style={{ borderLeft: '4px solid #8b5cf6' }}>
                     <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#a78bfa', fontSize: '1.2rem' }}>
                         <BrainCircuit size={28}/> Motor de IA Analítico
                     </h3>
-                    <p style={{color: '#94a3b8', fontSize: '13px', marginBottom: '1.5rem'}}>Comentarios generados en base al comportamiento matemático que detectamos entre tus números y rutinas.</p>
-                    
+                    <p style={{color: '#94a3b8', fontSize: '13px', marginBottom: '1.5rem'}}>Reporte transaccional actual.</p>
                     {insights?.length > 0 ? (
-                        insights.map((msg, i) => (
-                            <div key={i} className="insight-box">
-                                {msg}
-                            </div>
-                        ))
+                        insights.map((msg, i) => <div key={i} className="insight-box">{msg}</div>)
                     ) : (
                         <p style={{ color: 'gray', fontStyle: 'italic' }}>El motor está esperando mayor volumen de datos para extraer una conclusión acertada...</p>
                     )}
                 </div>
 
-                {/* GRÁFICO RECHARTS DE TORTA (PIE) */}
                 <div className="glass-card" style={{ height: '380px', display: 'flex', flexDirection: 'column' }}>
                     <h3 style={{ marginTop: 0, marginBottom: '0.2rem', color: '#f8fafc' }}>
-                        Nicho de Gastos y Fugas
+                        Nicho de Fugas Mapeado
                     </h3>
-                    <p className="metric-title" style={{marginBottom: '1rem'}}>¿A qué se está yendo tu dinero?</p>
-                    
                     {dataGrafico.length > 0 ? (
                         <ResponsiveContainer width="100%" height="100%">
-                            { /* Gráfica tipo Donut moderna apoyada en nuestra data transformada y renderizada vía SVG*/ }
                             <PieChart>
-                                <Pie
-                                    data={dataGrafico}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={100}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                    stroke="none"
-                                >
-                                    {dataGrafico.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORES_GRAFICO[index % COLORES_GRAFICO.length]} />
-                                    ))}
+                                <Pie data={dataGrafico} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
+                                    {dataGrafico.map((entry, index) => <Cell key={index} fill={COLORES_GRAFICO[index % COLORES_GRAFICO.length]} />)}
                                 </Pie>
-                                <Tooltip 
-                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', color: '#fff' }}
-                                    itemStyle={{ color: '#fff' }}
-                                />
+                                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} itemStyle={{ color: '#fff' }} />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }}/>
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <p style={{ margin: 'auto', color: 'gray' }}>Aún hay muy pocos egresos detectados en sistema para poder trazar un mapa o gráfica funcional.</p>
+                        <p style={{ margin: 'auto', color: 'gray' }}>Aún hay muy pocos egresos para trazar curvas funcionales.</p>
                     )}
                 </div>
-
             </div>
 
-            {/* LADO DERECHO: HISTORIAL TRANSACCIONAL CRUDO */}
+            {/* LADO DER: HISTORIAL CRUDO */}
             <div className="glass-card" style={{ height: '100%', minHeight: '500px' }}>
-                <h3 style={{ marginTop: 0, color: '#f8fafc' }}>Registro Histórico Contable</h3>
-                <p className="metric-title" style={{marginBottom: '1.5rem'}}>Listado de todos tus movimientos (ordenados por el más reciente)</p>
+                <h3 style={{ marginTop: 0, color: '#f8fafc' }}>Registro Histórico de la Entidad</h3>
+                <p className="metric-title" style={{marginBottom: '1.5rem'}}>Aterrizaje contable más reciente.</p>
                 
                 <div style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
                     {transacciones.length > 0 ? (
@@ -181,11 +197,9 @@ const Dashboard = () => {
                                 <div>
                                     <p style={{ margin: 0, fontWeight: '600', fontSize: '1.1rem', color: '#e2e8f0' }}>{t.category}</p>
                                     <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>
-                                        {/* Parseo de Fecha Internacional a Lectura Humana */}
                                         {new Date(t.date).toLocaleDateString('es-ES', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
                                     </p>
                                 </div>
-                                
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'bold', fontSize: '1.1rem' }}>
                                     {t.type === 'income' ? <ArrowUpRight className="text-success" size={22}/> : <ArrowDownRight className="text-danger" size={22}/>}
                                     <span className={t.type === 'income' ? 'text-success' : 'text-danger'}>
@@ -195,12 +209,23 @@ const Dashboard = () => {
                             </div>
                         ))
                     ) : (
-                        <p style={{ color: 'gray' }}>No tienes movimientos aún, o tu cuenta es muy joven.</p>
+                        <p style={{ color: 'gray' }}>Cuenta huérfana de data. Agruegue contenido.</p>
                     )}
                 </div>
             </div>
-
         </div>
+
+        {/* ========================================================= */}
+        {/*           INFRAESTRUCTURA INVISIBLE DEL MODAL             */}
+        {/* ========================================================= */}
+        <Modal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)}
+            titulo="Reportar Nueva Operación Local"
+        >
+            <TransactionForm onSubmit={manejarNuevaTransaccion} />
+        </Modal>
+
       </div>
     );
 };
