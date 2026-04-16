@@ -16,7 +16,8 @@ export const validadorTransaccion = [
 
     check('category')
         .notEmpty().withMessage('La clasificación contable no puede venir nula.')
-        .isString().withMessage('Formato de categoría corrupto. Se esperaba texto purificado.'),
+        .isIn(['Comida', 'Transporte', 'Alquiler', 'Servicios', 'Entretenimiento', 'Sueldos', 'Insumos', 'Otros', 'Ventas de mostrador', 'Ventas Online', 'Servicios Profesionales', 'Inversiones'])
+        .withMessage('Rechazado: La categoría proporcionada se encuentra fuera del catálogo autorizado.'),
         
     check('date')
         .notEmpty().withMessage('La fecha calendario es un requisito inamovible.')

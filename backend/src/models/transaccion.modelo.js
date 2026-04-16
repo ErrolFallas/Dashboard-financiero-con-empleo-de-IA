@@ -13,7 +13,8 @@ const esquemaDeTransaccion = new mongoose.Schema({
         min: 0 // Prevención: Un gasto se define por su 'type', no debe haber montos en negativo
     },
     category: {
-        type: String, // Ej: "Alquiler", "Sueldos", "Ventas"
+        type: String, // Restricción Enum: Únicamente textos pre-aprobados pueden tocar el Disco Duro
+        enum: ['Comida', 'Transporte', 'Alquiler', 'Servicios', 'Entretenimiento', 'Sueldos', 'Insumos', 'Otros', 'Ventas de mostrador', 'Ventas Online', 'Servicios Profesionales', 'Inversiones'],
         required: true,
         trim: true
     },
@@ -30,5 +31,12 @@ const esquemaDeTransaccion = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+// ============================================
+// ÍNDICE COMPUESTO PARA OPTIMIZACIÓN (+99% Rapidez)
+// ============================================
+// Impedimos el temido "Collection Scan" al pedir la IA.
+// MongoDB pre-construye un árbol ordenado por "Dueño" y "Fecha Decreciente" ultra-rápido.
+esquemaDeTransaccion.index({ userId: 1, date: -1 });
 
 export default mongoose.model('Transaccion', esquemaDeTransaccion);

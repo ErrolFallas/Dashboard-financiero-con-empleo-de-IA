@@ -1,6 +1,6 @@
 import express from 'express';
-import cors from 'cors'; // Librería fundamental para permitir la unión Frontend react-vite (5173) y Backend node (3000)
-
+import cors from 'cors'; 
+import helmet from 'helmet'; // [NUEVA SEGURIDAD] Protector Universal Header Shield
 // Importamos módulos de enrutadores locales
 import rutasDeEstado from './routes/estado.rutas.js';
 import rutasAutenticacion from './routes/autenticacion.rutas.js';
@@ -13,8 +13,24 @@ import { errorHandler } from './middlewares/errorHandler.js';
 const aplicacion = express();
 
 // --- ZONA DE INTERMEDIARIOS GLOBALES ---
-// Inyectamos CORS primero para que el navegador de React no bloquee nuestras respuestas API
-aplicacion.use(cors());
+// 1. HELMET: Sella el backend ocultando firmas, metadata X-Powered-By y sumando protecciones XSS nativas sobre cabeceras.
+aplicacion.use(helmet());
+
+// 2. CORS RESTRINGIDO: Cortamos el acceso abierto de Internet a nuestra API de datos. Solo el Frontend Vite está autorizado.
+const dominiosBloqueados = ['http://localhost:5173']; 
+aplicacion.use(cors({
+    origin: function(origin, callback) {
+        // En entorno local de equipo (Postman) a veces no se emite origin HTTP. Lo toleramos.
+        // Mientras que llamadas cruzadas tipo script deben coincidir con la lista blanca.
+        if (!origin || dominiosBloqueados.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Acceso bloqueado: Violación a política corporativa CORS.'));
+        }
+    },
+    credentials: true // Permite intercambio de credenciales protegidas
+}));
+
 aplicacion.use(express.json());
 
 // --- ZONA DE ENRUTAMIENTO PRINCIPAL ---
