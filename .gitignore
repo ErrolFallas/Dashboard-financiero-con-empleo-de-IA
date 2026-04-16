@@ -1,0 +1,40 @@
+# ============================
+# DEPENDENCIAS PESADAS
+# ============================
+# ¡Jamás subir node_modules a Git! Evitará que subas cientos de Megabytes innecesarios.
+node_modules/
+
+# ============================
+# ARCHIVOS CRÍTICOS DE SEGURIDAD
+# ============================
+# Aquí ocultamos tus llaves JWT y contraseñas de MongoDB para que nadie en internet las robe
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+
+# ============================
+# LOGS Y ERRORES DE CONSOLA
+# ============================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================
+# LOS BUILDS / ARCHIVOS COMPILADOS
+# ============================
+# Oculta la carpeta generada por 'npm run build' de tu Frontend con Vite
+/frontend/dist/
+/frontend/build/
+dist/
+dist-ssr/
+
+# ============================
+# SISTEMA OPERATIVO Y EDITORES
+# ============================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

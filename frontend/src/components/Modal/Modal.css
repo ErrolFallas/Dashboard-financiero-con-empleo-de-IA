@@ -1,0 +1,70 @@
+/* Capa oscura que envuelve la pantalla entera */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(11, 15, 25, 0.85); /* Fondo muy oscuro pero transparente */
+  backdrop-filter: blur(8px); /* Efecto Glass Blur */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Fuerza máxima prioridad por sobre encabezados y gráficos */
+  
+  /* Retoque Premium: Animación Suave de Aparición */
+  animation: fadeInModal 0.25s ease-out forwards;
+}
+
+/* El Contenedor que encierra al componente 'children' */
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background: #1e293b; /* Tonalidad marina oscura elegante */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1rem;
+  max-height: 90vh; /* Previene desbordamiento en laptops pequeñas */
+  overflow-y: auto; /* Habilita scroll nativo de ser necesario */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  
+  /* Animación de salto de abajo hacia arriba */
+  animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Botón (X) de cerrado limpio */
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  margin-top: -10px;
+}
+
+.modal-close-btn:hover {
+  color: #f43f5e; /* Adolece un rojo nativo al Hover */
+  transform: scale(1.1);
+}
+
+/* Motores visuales (Keyframes) */
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from { 
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
