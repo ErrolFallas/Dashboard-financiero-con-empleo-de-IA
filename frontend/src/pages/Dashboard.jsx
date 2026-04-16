@@ -157,7 +157,7 @@ const Dashboard = () => {
               {/* BOTÓN DISPARADOR: Al clickearlo sube la variable 'isModalOpen' a TRUE forzando el montaje del componente Modal */}
               <button 
                   onClick={() => setIsModalOpen(true)}
-                  style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0.8rem 1rem', borderRadius: '8px', display: 'flex', gap: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+                  style={{ background: 'var(--accent)', color: 'white', border: 'none', padding: '0.8rem 1rem', borderRadius: '8px', display: 'flex', gap: '8px', cursor: 'pointer', fontWeight: 'bold' }}
               >
                   <PlusCircle size={20} /> Nueva Transacción
               </button>
@@ -200,20 +200,25 @@ const Dashboard = () => {
             
             {/* LADO IZQ: IA Y DOUGHNUT */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div className="glass-card" style={{ borderLeft: '4px solid #8b5cf6' }}>
-                    <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#a78bfa', fontSize: '1.2rem' }}>
+                <div className="glass-card" style={{ borderLeft: '4px solid var(--secondary)' }}>
+                    <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--secondary)', fontSize: '1.2rem' }}>
                         <BrainCircuit size={28}/> Motor de IA Analítico
                     </h3>
-                    <p style={{color: '#94a3b8', fontSize: '13px', marginBottom: '1.5rem'}}>Reporte transaccional actual.</p>
+                    <p style={{color: 'var(--text)', opacity: 0.7, fontSize: '13px', marginBottom: '1.5rem'}}>Reporte transaccional actual.</p>
                     {insights?.length > 0 ? (
                         insights.map((msg, i) => <div key={i} className="insight-box">{msg}</div>)
                     ) : (
-                        <p style={{ color: 'gray', fontStyle: 'italic' }}>El motor está esperando mayor volumen de datos para extraer una conclusión acertada...</p>
+                        <div style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '8px' }}>
+                            <p style={{ margin: 0, color: 'var(--text)', fontWeight: 600, fontSize: '0.90rem' }}>¿Qué hace este cuadro?</p>
+                            <p style={{ color: 'var(--text)', opacity: 0.8, fontSize: '0.85rem', lineHeight: 1.5, marginTop: '8px' }}>
+                                Nuestra Inteligencia Artificial analiza tus gastos y te dará alertas o recomendaciones automáticas. <b>Agrega tus primeros gastos</b> para que el motor empiece a trabajar.
+                            </p>
+                        </div>
                     )}
                 </div>
 
                 <div className="glass-card" style={{ height: '380px', display: 'flex', flexDirection: 'column' }}>
-                    <h3 style={{ marginTop: 0, marginBottom: '0.2rem', color: '#f8fafc' }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '0.2rem', color: 'var(--text)' }}>
                         Nicho de Fugas Mapeado
                     </h3>
                     {dataGrafico.length > 0 ? (
@@ -222,19 +227,24 @@ const Dashboard = () => {
                                 <Pie data={dataGrafico} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
                                     {dataGrafico.map((entry, index) => <Cell key={index} fill={COLORES_GRAFICO[index % COLORES_GRAFICO.length]} />)}
                                 </Pie>
-                                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} itemStyle={{ color: '#fff' }} />
+                                <Tooltip contentStyle={{ backgroundColor: 'var(--background)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8px', color: 'var(--text)' }} itemStyle={{ color: 'var(--text)' }} />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }}/>
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <p style={{ margin: 'auto', color: 'gray' }}>Aún hay muy pocos egresos para trazar curvas funcionales.</p>
+                        <div style={{ margin: 'auto', textAlign: 'center', padding: '1.5rem', background: 'rgba(0,0,0,0.02)', borderRadius: '8px', maxWidth: '80%' }}>
+                            <p style={{ margin: 0, color: 'var(--text)', fontWeight: 600, fontSize: '0.90rem' }}>Fugas de Capital</p>
+                            <p style={{ color: 'var(--text)', opacity: 0.8, fontSize: '0.85rem', lineHeight: 1.5, marginTop: '8px' }}>
+                                Aquí se construirá una dona visual interactiva (Doughnut Chart) separada por colores para ver fácilmente a dónde se va tu dinero. Registra ingresos y egresos para iniciar.
+                            </p>
+                        </div>
                     )}
                 </div>
             </div>
 
             {/* LADO DER: HISTORIAL CRUDO */}
             <div className="glass-card" style={{ height: '100%', minHeight: '500px' }}>
-                <h3 style={{ marginTop: 0, color: '#f8fafc' }}>Registro Histórico de la Entidad</h3>
+                <h3 style={{ marginTop: 0, color: 'var(--text)' }}>Registro Histórico de la Entidad</h3>
                 <p className="metric-title" style={{marginBottom: '1.5rem'}}>Aterrizaje contable más reciente.</p>
                 
                 <div style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
@@ -242,8 +252,8 @@ const Dashboard = () => {
                         transacciones.map(t => (
                             <div key={t._id} className="transaction-item">
                                 <div>
-                                    <p style={{ margin: 0, fontWeight: '600', fontSize: '1.1rem', color: '#e2e8f0' }}>{t.category}</p>
-                                    <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>
+                                    <p style={{ margin: 0, fontWeight: '600', fontSize: '1.1rem', color: 'var(--text)' }}>{t.category}</p>
+                                    <p style={{ margin: 0, fontSize: '13px', color: 'var(--text)', opacity: 0.8 }}>
                                         {new Date(t.date).toLocaleDateString('es-ES', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
                                     </p>
                                 </div>
@@ -256,7 +266,13 @@ const Dashboard = () => {
                             </div>
                         ))
                     ) : (
-                        <p style={{ color: 'gray' }}>Cuenta huérfana de data. Agruegue contenido.</p>
+                        <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px dashed rgba(0,0,0,0.15)' }}>
+                            <p style={{ margin: 0, fontWeight: 'bold', color: 'var(--text)', fontSize: '1.1rem' }}>No hay transacciones aún 📝</p>
+                            <p style={{ fontSize: '0.95rem', color: 'var(--text)', opacity: 0.8, lineHeight: 1.6, marginTop: '12px' }}>
+                                Este es tu historial principal. Tus movimientos organizados por fecha aparecerán aquí.<br/><br/>
+                                👉 Toca el botón <b>"+ Nueva Transacción"</b> en la parte superior para ingresar tu primer capital.
+                            </p>
+                        </div>
                     )}
                 </div>
             </div>

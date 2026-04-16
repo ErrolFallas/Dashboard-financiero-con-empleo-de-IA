@@ -50,7 +50,7 @@ const Modal = ({ isOpen, onClose, titulo, children }) => {
         
         {/* Cabecera Intercambiable */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#f8fafc', fontWeight: 600 }}>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text)', fontWeight: 600 }}>
             {titulo}
           </h2>
           

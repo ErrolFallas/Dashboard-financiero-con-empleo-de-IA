@@ -71,9 +71,9 @@ const TransactionForm = ({ onSubmit }) => {
     // Función auxiliar visual para pintar bordes rojos ardientes si ZOD detecta error y el usuario ya tocó el campo
     const getEstiloInput = (nombreCampo) => ({
         padding: '0.8rem', borderRadius: '8px', 
-        border: errors[nombreCampo] ? '2px solid #f43f5e' : '1px solid #334155', // Transición semántica a Rojo
-        background: '#0b0f19', color: '#f8fafc', outline: 'none', colorScheme: 'dark',
-        transition: 'border 0.2sease-in-out'
+        border: errors[nombreCampo] ? '2px solid var(--danger)' : '1px solid rgba(0,0,0,0.15)', // Transición semántica a Rojo
+        background: 'var(--background)', color: 'var(--text)', outline: 'none', colorScheme: 'light',
+        transition: 'border 0.2s ease-in-out'
     });
 
     return (
@@ -82,7 +82,7 @@ const TransactionForm = ({ onSubmit }) => {
             
             {/* INPUT TIPO */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ color: '#94a3b8', fontSize: '0.90rem', fontWeight: 500 }}>Operación Contable</label>
+                <label style={{ color: 'var(--text)', opacity: 0.8, fontSize: '0.90rem', fontWeight: 500 }}>Operación Contable</label>
                 <select {...register('type')} style={getEstiloInput('type')}>
                     <option value="expense">📉 Gasto Operativo (Salida)</option>
                     <option value="income">📈 Capital Generado (Ingreso)</option>
@@ -93,7 +93,7 @@ const TransactionForm = ({ onSubmit }) => {
 
             {/* INPUT MONTO */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ color: '#94a3b8', fontSize: '0.90rem', fontWeight: 500 }}>Importe o Cantidad Absoluta ($)</label>
+                <label style={{ color: 'var(--text)', opacity: 0.8, fontSize: '0.90rem', fontWeight: 500 }}>Importe o Cantidad Absoluta ($)</label>
                 <input 
                     type="number" 
                     min="0" step="0.01"
@@ -106,7 +106,7 @@ const TransactionForm = ({ onSubmit }) => {
 
             {/* INPUT CATEGORIA */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ color: '#94a3b8', fontSize: '0.90rem', fontWeight: 500 }}>Clasificación del Movimiento</label>
+                <label style={{ color: 'var(--text)', opacity: 0.8, fontSize: '0.90rem', fontWeight: 500 }}>Clasificación del Movimiento</label>
                 <select {...register('category')} style={getEstiloInput('category')}>
                     <option value="" disabled>-- Escoge una categoría obligatoria --</option>
                     {categoriasDisponibles.map((cats, index) => (
@@ -118,7 +118,7 @@ const TransactionForm = ({ onSubmit }) => {
 
             {/* INPUT FECHA */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ color: '#94a3b8', fontSize: '0.90rem', fontWeight: 500 }}>Fecha de la Transacción</label>
+                <label style={{ color: 'var(--text)', opacity: 0.8, fontSize: '0.90rem', fontWeight: 500 }}>Fecha de la Transacción</label>
                 <input 
                     type="date" 
                     {...register('date')}
@@ -134,12 +134,12 @@ const TransactionForm = ({ onSubmit }) => {
                 type="submit" 
                 style={{ 
                     marginTop: '0.5rem', padding: '1rem', borderRadius: '8px', 
-                    background: '#3b82f6', color: 'white', fontWeight: 'bold', 
-                    cursor: 'pointer', border: 'none', transition: 'background 0.2s',
+                    background: 'var(--accent)', color: 'white', fontWeight: 'bold', 
+                    cursor: 'pointer', border: 'none', transition: 'opacity 0.2s',
                     fontSize: '1rem'
                 }}
-                onMouseOver={(e) => e.target.style.background = '#2563eb'}
-                onMouseOut={(e) => e.target.style.background = '#3b82f6'}
+                onMouseOver={(e) => e.target.style.opacity = 0.85}
+                onMouseOut={(e) => e.target.style.opacity = 1}
             >
                 Validar y Registrar Formulario
             </button>

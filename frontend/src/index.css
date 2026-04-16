@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+  --text: #0c0b2d;
+  --background: #fbfbfe;
+  --primary: #501b1b;
+  --secondary: #a057ff;
+  --accent: #0600c2;
+  
+  --success: #10b981;
+  --danger: #f43f5e;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -7,19 +18,19 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background-color: #0b0f19; /* Fondo súper premium negro/azulado */
-  color: #f1f5f9; /* Textos primarios luminosos */
+  background-color: var(--background);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Efecto Glassmorphism y Elevación de Componentes */
+/* Efecto Glassmorphism Ligero (Light Mode Alto Contraste) */
 .glass-card {
-  background: rgba(30, 41, 59, 0.7);
+  background: #ffffff; /* Blanco sólido fuerte */
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.15); /* Border súper visible */
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06); /* Sombra acentuada separadora */
   transition: transform 0.2s ease-in-out;
 }
 
@@ -29,9 +40,9 @@ body {
 
 /* Tipografías de KPIs */
 .metric-title {
-  color: #94a3b8;
+  color: var(--text);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600; /* Mayor peso visual */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
@@ -45,20 +56,20 @@ body {
 }
 
 /* Tokens de Color Visual */
-.text-success { color: #10b981; }
-.text-danger { color: #f43f5e; }
-.text-neutral { color: #38bdf8; }
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+.text-neutral { color: var(--accent); }
 
 /* Contenedor Flotante de IA */
 .insight-box {
-  background: rgba(59, 130, 246, 0.1);
-  border-left: 4px solid #8b5cf6;
+  background: rgba(160, 87, 255, 0.1); /* Base purpura secundaria */
+  border-left: 4px solid var(--secondary);
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 0 8px 8px 0;
   font-size: 0.95rem;
   line-height: 1.4;
-  color: #e2e8f0;
+  color: var(--text);
 }
 
 /* Listado de Historial */
@@ -66,12 +77,20 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.2rem 1rem;
+  margin-bottom: 0.6rem;
+  background: #fbfbfe;
+  border: 1px solid rgba(0, 0, 0, 0.08); /* Cajas individuales separadas */
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.transaction-item:hover {
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .transaction-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 /* Botón Destructivo Elegante */
@@ -96,11 +115,11 @@ body {
 /* ======================================================== */
 @keyframes pulseGlow {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; } /* El bajón de opacidad crea la ilusión visual de estar leyendo data */
+  50% { opacity: 0.3; } 
 }
 
 .skeleton-box {
-  background: rgba(148, 163, 184, 0.15); /* Gris muy sutil con destellos metálicos */
+  background: rgba(0, 0, 0, 0.06); /* Esqueletos grises oscuros muy tenues para fondos blancos */
   border-radius: 8px;
   animation: pulseGlow 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

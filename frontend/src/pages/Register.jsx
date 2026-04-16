@@ -38,9 +38,18 @@ const Register = () => {
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-        <h1 style={{ color: '#f8fafc', fontSize: '1.8rem', marginBottom: '0.5rem' }}>Crea tu Cuenta</h1>
-        <p style={{ color: '#94a3b8', marginBottom: '1.5rem', marginTop: 0, fontSize: '0.95rem' }}>Comienza a gestionar tus finanzas hoy mismo.</p>
+    <div style={{ 
+        padding: '2.5rem 2rem', 
+        maxWidth: '420px', 
+        margin: '4rem auto', 
+        fontFamily: 'sans-serif',
+        background: '#ffffff', 
+        borderRadius: '16px',
+        boxShadow: '0 12px 35px rgba(0,0,0,0.08)',
+        border: '1px solid rgba(0,0,0,0.06)'
+    }}>
+        <h1 style={{ color: 'var(--text)', fontSize: '1.8rem', margin: '0 0 0.5rem 0' }}>Crea tu Cuenta</h1>
+        <p style={{ color: 'var(--text)', opacity: 0.7, marginBottom: '1.5rem', marginTop: 0, fontSize: '0.95rem' }}>Comienza a gestionar tus finanzas hoy mismo.</p>
         
         <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input 
@@ -49,7 +58,7 @@ const Register = () => {
                 required 
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
+                style={{ padding: '0.8rem', background: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', color: 'var(--text)', borderRadius: '8px' }}
                 disabled={cargando}
             />
             <input 
@@ -58,7 +67,7 @@ const Register = () => {
                 required 
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
-                style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
+                style={{ padding: '0.8rem', background: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', color: 'var(--text)', borderRadius: '8px' }}
                 disabled={cargando}
             />
             {/* Agregamos Hint Visual de los 8 caracteres */}
@@ -68,7 +77,7 @@ const Register = () => {
                 required 
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}
-                style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
+                style={{ padding: '0.8rem', background: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', color: 'var(--text)', borderRadius: '8px' }}
                 disabled={cargando}
             />
             
@@ -79,7 +88,7 @@ const Register = () => {
                 required 
                 value={confirmarContrasena}
                 onChange={(e) => setConfirmarContrasena(e.target.value)}
-                style={{ padding: '0.8rem', background: '#1e293b', border: '1px solid #334155', color: '#f8fafc', borderRadius: '8px' }}
+                style={{ padding: '0.8rem', background: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', color: 'var(--text)', borderRadius: '8px' }}
                 disabled={cargando}
             />
             
@@ -89,11 +98,11 @@ const Register = () => {
                 style={{ 
                     marginTop: '0.6rem',
                     padding: '0.85rem', 
-                    backgroundColor: cargando ? '#475569' : '#10b981', 
+                    backgroundColor: cargando ? '#d1d5db' : 'var(--accent)', 
                     color: 'white', 
                     cursor: cargando ? 'not-allowed' : 'pointer',
                     fontWeight: '600',
-                    transition: 'background 0.2s',
+                    transition: 'opacity 0.2s',
                     border: 'none',
                     borderRadius: '8px'
                 }}
@@ -103,8 +112,8 @@ const Register = () => {
         </form>
         
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>¿Ya tienes una cuenta? </span>
-          <Link to="/login" style={{ color: '#3b82f6', fontWeight: '600', textDecoration: 'none', fontSize: '0.9rem' }}>Inicia Sesión</Link>
+          <span style={{ color: 'var(--text)', opacity: 0.7, fontSize: '0.9rem' }}>¿Ya tienes una cuenta? </span>
+          <Link to="/login" style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none', fontSize: '0.9rem' }}>Inicia Sesión</Link>
         </div>
     </div>
   );
